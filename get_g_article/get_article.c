@@ -47,7 +47,7 @@ void main() {
 	}
 	else
 		printf("open 2.txt file\n");
-	/*printf("%d\n", sizeof(tag_start));*/
+	*printf("%d\n", sizeof(tag_start));
 
 
 	/*find the tag_start*/
