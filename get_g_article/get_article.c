@@ -3,8 +3,7 @@
 #include <string.h>
 
 
-#define OUT 0
-#define IN 1
+
 #define NAME_LEN 128
 #define ATTR_NUM 16
 #define ATTR_LEN 1024
