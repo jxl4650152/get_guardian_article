@@ -6,11 +6,13 @@
 #define OUT 0
 #define IN 1
 #define NAME_LEN 128
-#define ATTR_NUM 128
+#define ATTR_NUM 16
 #define ATTR_LEN 1024
 
 
-struct Tag get_tag(FILE *p, struct Tag tag);
+void get_tag(FILE *p, struct Tag *tag);
+char *get_tag_attr_content(struct Tag tag, char *tag_attr);
+
 
 struct Tag {
 	char tag_name[NAME_LEN];
@@ -18,38 +20,45 @@ struct Tag {
 	char attr_content[ATTR_NUM][ATTR_LEN];
 };
 
-struct Tag get_tag(FILE *p, struct Tag tag) {
+void get_tag(FILE *p, struct Tag *tag) {
 
 
 	char c;
 
-	for (int i = 0; c = fgetc(p) != ' '; i++)
-		tag.tag_name[i] = c;
+	for (int i = 0; (c = fgetc(p) != ' ')&&(c != '>'); i++)
+		tag->tag_name[i] = c;
 
 	for (int i_name = 0; c != '>'; i_name++) {
 
 		int j_name = 0;
 
 		while (c = fgetc(p) != '=') {
-			tag.attr_name[i_name][j_name++] = c;
+			tag->attr_name[i_name][j_name++] = c;
 		}
 
 		if (c = fgetc(p) == '\"')
 			;
 		while (c = fgetc(p) != '\"') {
-			tag.attr_content[i_name][j_name++] = c;
+			tag->attr_content[i_name][j_name++] = c;
 		}
 
 		if (c = fgetc(p) == ' ')
 			;
 	}
 
-	return tag;
+	
 }
 
 
+char *get_tag_attr_content(struct Tag tag, const char *tag_attr) {
+	int i;
+	for (i = 0; tag.attr_name[i] != NULL; i++) {
+		if (strcmp(tag_attr, tag.attr_name[i]) == 0)
+			break;
+	}
 
-
+	return tag.attr_content[i];
+}
 
 
 
@@ -63,22 +72,20 @@ struct Tag get_tag(FILE *p, struct Tag tag) {
 void main() {
 
 
-	char tag_start[] = "<div class=\"content__article-body";
-	char tag_end[] = "</div>";
-	char tag_div[] = "<div ";
+	char target_attr_content[] = "content__article-body from-content-api js-article__body";
+	char target_end_tag_name[] = "/div";
+	char target_tag_name[] = "div";
+	char target_attr_name[] = "class";
 
-	int state_start = OUT;
-	int state_end = OUT;
+	
 
 
 
 	FILE *p;
 	FILE *new;
 	char c;
-
-	int i_start = 0;
-	int i_end = 0;
-	int i_tag = 0;
+	static struct Tag tag;
+	int num;
 
 	/*open 1.txt and 2.txt*/
 
@@ -102,6 +109,39 @@ void main() {
 	}
 	else
 		printf("open 2.txt file\n");
+
+	/*find start_tag*/
+
+
+	while (c = fgetc(p) != EOF) {
+		if (c != "<")
+			;
+		else {
+			get_tag(p, &tag);
+			if (strcmp(tag.tag_name, target_tag_name) == 0) {
+				if (strcmp(target_attr_content, get_tag_attr_content(tag, target_attr_name)) == 0)
+					printf("start tag is found/n");
+				break;
+			}
+
+			memset(&tag, 0, sizeof(struct Tag));
+		}
+	}
+
+	/*skip CFNL etc.*/
+
+	while (c = fgetc(p) != '<')
+		;
+
+	num = 1;
+
+	while(num != 0){
+		get_tag(p, &tag);
+		if (strcmp(tag.tag_name, target_tag_name) == 0)
+			num++;
+		if (strcmp(tag.tag_name, target_end_tag_name) == 0)
+			num--;
+		while(c = fgetc(p) != '<')
 
 
 
