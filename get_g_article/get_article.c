@@ -82,7 +82,26 @@ void main() {
 
 	/*open 1.txt and 2.txt*/
 
-	
+
+	p = fopen("1.txt", "r");
+
+	if (!p)
+	{
+		printf("Failed to open 1.txt file\n");
+		exit(1);
+	}
+	else
+		printf("open 1.txt file\n");
+
+	new = fopen("2.txt", "w");
+
+	if (!new)
+	{
+		printf("Failed to open 2.txt file\n");
+		exit(1);
+	}
+	else
+		printf("open 2.txt file\n");
 
 
 
