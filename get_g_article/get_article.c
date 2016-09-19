@@ -112,7 +112,7 @@ void main() {
 	/*find start_tag*/
 
 
-	while (c = fgetc(p) != EOF) {
+	while (((c = fgetc(p)) != EOF)) {
 		printf("%c", c);
 		if (c != "<")
 			;
