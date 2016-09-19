@@ -77,7 +77,7 @@ void main() {
 	char target_tag_name[] = "div";
 	char target_attr_name[] = "class";
 
-	
+
 
 
 
@@ -114,6 +114,7 @@ void main() {
 
 
 	while (c = fgetc(p) != EOF) {
+		printf("%c", c);
 		if (c != "<")
 			;
 		else {
@@ -135,13 +136,16 @@ void main() {
 
 	num = 1;
 
-	while(num != 0){
+	while (num != 0) {
 		get_tag(p, &tag);
 		if (strcmp(tag.tag_name, target_tag_name) == 0)
 			num++;
 		if (strcmp(tag.tag_name, target_end_tag_name) == 0)
 			num--;
-		while(c = fgetc(p) != '<')
+		while ((c = fgetc(p) != '<') && (c != EOF))
+			fputc(c, new);
+	}
+}
 
 
 
